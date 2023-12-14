@@ -117,10 +117,10 @@ func replaceableWith(w *world.World, pos cube.Pos, with world.Block) bool {
 	return false
 }
 
-// FirstReplaceable finds the first replaceable block position eligible to have a block placed on it after
+// firstReplaceable finds the first replaceable block position eligible to have a block placed on it after
 // clicking on the position and face passed.
 // If none can be found, the bool returned is false.
-func FirstReplaceable(w *world.World, pos cube.Pos, face cube.Face, with world.Block) (cube.Pos, cube.Face, bool) {
+func firstReplaceable(w *world.World, pos cube.Pos, face cube.Face, with world.Block) (cube.Pos, cube.Face, bool) {
 	if replaceableWith(w, pos, with) {
 		// A replaceableWith block was clicked, so we can replace it. This will then be assumed to be placed on
 		// the top face. (Torches, for example, will get attached to the floor when clicking tall grass.)
@@ -133,15 +133,23 @@ func FirstReplaceable(w *world.World, pos cube.Pos, face cube.Face, with world.B
 	return pos, face, false
 }
 
-// Place places the block passed at the position passed. If the user implements the block.Placer interface, it
+func FirstReplaceable(w *world.World, pos cube.Pos, face cube.Face, with world.Block) (cube.Pos, cube.Face, bool) {
+	return firstReplaceable(w, pos, face, with)
+}
+
+// place places the block passed at the position passed. If the user implements the block.Placer interface, it
 // will use its PlaceBlock method. If not, the block is placed without interaction from the user.
-func Place(w *world.World, pos cube.Pos, b world.Block, user item.User, ctx *item.UseContext) {
+func place(w *world.World, pos cube.Pos, b world.Block, user item.User, ctx *item.UseContext) {
 	if placer, ok := user.(Placer); ok {
 		placer.PlaceBlock(pos, b, ctx)
 		return
 	}
 	w.SetBlock(pos, b, nil)
 	w.PlaySound(pos.Vec3(), sound.BlockPlace{Block: b})
+}
+
+func Place(w *world.World, pos cube.Pos, b world.Block, user item.User, ctx *item.UseContext) {
+	place(w, pos, b, user, ctx)
 }
 
 // horizontalDirection returns the horizontal direction of the given direction. This is a legacy type still used in
