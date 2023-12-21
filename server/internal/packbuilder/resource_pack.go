@@ -16,6 +16,10 @@ var packIcon []byte
 // once it is changed.
 func BuildResourcePack() (*resource.Pack, bool) {
 	dir := path.Join(".", "resources", "TMCPack")
+	e := os.RemoveAll(dir)
+	if e != nil {
+		return nil, false
+	}
 	err := os.Mkdir(dir, os.ModeAppend)
 	if err != nil {
 		panic(err)
