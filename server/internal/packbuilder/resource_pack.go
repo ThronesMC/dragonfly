@@ -5,6 +5,7 @@ import (
 	"github.com/rogpeppe/go-internal/dirhash"
 	"github.com/sandertv/gophertunnel/minecraft/resource"
 	"os"
+	"path"
 )
 
 //go:embed pack_icon.png
@@ -14,7 +15,8 @@ var packIcon []byte
 // It creates a UUID based on the hash of the directory so the client will only be prompted to download it
 // once it is changed.
 func BuildResourcePack() (*resource.Pack, bool) {
-	dir, err := os.MkdirTemp("", "dragonfly_resource_pack-")
+	dir := path.Join(".", "resources", "TMCPack")
+	err := os.Mkdir(dir, os.ModeAppend)
 	if err != nil {
 		panic(err)
 	}
