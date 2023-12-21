@@ -20,7 +20,6 @@ func BuildResourcePack() (*resource.Pack, bool) {
 	if err != nil {
 		panic(err)
 	}
-	defer os.RemoveAll(dir)
 
 	var assets int
 	var lang []string
