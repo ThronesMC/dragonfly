@@ -38,6 +38,8 @@ type Allower interface {
 	// Allow checks if the Source passed is allowed to execute the command. True is returned if the Source is
 	// allowed to execute the command.
 	Allow(src Source) bool
+	//PermissionMessage helps customize the message sent when the player does not have permission.
+	PermissionMessage(src Source) string
 }
 
 // Command is a wrapper around a Runnable. It provides additional identity and utility methods for the actual
@@ -220,6 +222,12 @@ func (cmd Command) String() string {
 // parsing was not successful or the Runnable could not be run by this source, an error is returned, and the
 // leftover command line.
 func (cmd Command) executeRunnable(v reflect.Value, args string, source Source, output *Output) (*Line, error) {
+	if a, ok := v.Interface().(Allower); ok && !a.Allow(source) {
+		//lint:ignore ST1005 Error string is capitalised because it is shown to the player.
+		//goland:noinspection GoErrorStringFormat
+		return nil, fmt.Errorf(a.PermissionMessage(source))
+	}
+
 	var argFrags []string
 	if args != "" {
 		r := csv.NewReader(strings.NewReader(args))
