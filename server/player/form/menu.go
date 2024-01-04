@@ -12,6 +12,7 @@ type Menu struct {
 	title, body string
 	submittable MenuSubmittable
 	buttons     []Button
+	values      map[Button]interface{}
 }
 
 // NewMenu creates a new Menu form using the MenuSubmittable passed to handle the output of the form. The
@@ -47,6 +48,9 @@ func (m Menu) WithBody(body ...any) Menu {
 // which the new Menu form is returned.
 func (m Menu) WithButtons(buttons ...Button) Menu {
 	m.buttons = append(m.buttons, buttons...)
+	for _, b := range buttons {
+		m.values[b] = b.Value
+	}
 	return m
 }
 
@@ -58,6 +62,11 @@ func (m Menu) Title() string {
 // Body returns the formatted text in the body passed to the menu using WithBody().
 func (m Menu) Body() string {
 	return m.body
+}
+
+// Data returns the value passed on from the button struct.
+func (m Menu) Data(button Button) interface{} {
+	return m.values[button]
 }
 
 // Buttons returns a list of all buttons of the MenuSubmittable. It parses them from the fields using

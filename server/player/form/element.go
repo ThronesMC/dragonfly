@@ -208,11 +208,13 @@ type Button struct {
 	// such as 'https://someimagewebsite.com/someimage.png', or a path pointing to a local asset, such as
 	// 'textures/blocks/grass_carried'.
 	Image string
+	// Value holds a value that can be used to identify the button in terms of other value.
+	Value interface{}
 }
 
 // NewButton creates and returns a new Button using the text and image passed.
-func NewButton(text, image string) Button {
-	return Button{Text: text, Image: image}
+func NewButton(text, image string, value interface{}) Button {
+	return Button{Text: text, Image: image, Value: value}
 }
 
 // MarshalJSON ...
