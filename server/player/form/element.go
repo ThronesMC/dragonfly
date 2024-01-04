@@ -221,7 +221,7 @@ func NewButton(text, image string, value interface{}) Button {
 
 // Value returns the value passed on from the button struct.
 func (b Button) Value() interface{} {
-	return b.fm.values[b]
+	return b.fm.values[&b]
 }
 
 // MarshalJSON ...
