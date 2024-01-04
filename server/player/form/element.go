@@ -212,7 +212,7 @@ type Button struct {
 	Image string
 	// Value holds a value that can be used to identify the button in terms of other value.
 	value interface{}
-	fm    Menu
+	Menu  *Menu
 }
 
 // NewButton creates and returns a new Button using the text and image passed.
@@ -222,12 +222,12 @@ func NewButton(text, image string, value interface{}) Button {
 
 // Value returns the value passed on from the button struct.
 func (b Button) Value() interface{} {
-	fmt.Print(b.fm)
+	fmt.Print(b.Menu)
 	fmt.Println()
-	fmt.Print(b.fm.values)
+	fmt.Print(b.Menu.values)
+	fmt.Println()
 	fmt.Print(b)
-	fmt.Print(&b)
-	return b.fm.values[&b]
+	return b.Menu.values[&b]
 }
 
 // MarshalJSON ...

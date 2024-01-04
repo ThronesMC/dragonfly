@@ -51,7 +51,7 @@ func (m Menu) WithButtons(buttons ...Button) Menu {
 		m.values = make(map[*Button]interface{})
 	}
 	for _, b := range buttons {
-		b.fm = m
+		b.Menu = &m
 		m.values[&b] = b.Value
 	}
 	m.buttons = append(m.buttons, buttons...)
