@@ -47,6 +47,9 @@ func (m Menu) WithBody(body ...any) Menu {
 // WithButtons creates a copy of the Menu form and appends the buttons passed to the existing buttons, after
 // which the new Menu form is returned.
 func (m Menu) WithButtons(buttons ...Button) Menu {
+	if m.values == nil {
+		m.values = make(map[*Button]interface{})
+	}
 	for _, b := range buttons {
 		b.fm = m
 		m.values[&b] = b.Value
