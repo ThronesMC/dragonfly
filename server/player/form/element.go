@@ -201,6 +201,7 @@ func (s StepSlider) Value() int {
 // Button represents a button added to a Menu or Modal form. The button has text on it and an optional image,
 // which may be either retrieved from a website or the local assets of the game.
 type Button struct {
+
 	// Text holds the text displayed on the button. It may use Minecraft formatting codes and may have
 	// newlines.
 	Text string
@@ -209,12 +210,18 @@ type Button struct {
 	// 'textures/blocks/grass_carried'.
 	Image string
 	// Value holds a value that can be used to identify the button in terms of other value.
-	Value interface{}
+	value interface{}
+	fm    Menu
 }
 
 // NewButton creates and returns a new Button using the text and image passed.
 func NewButton(text, image string, value interface{}) Button {
-	return Button{Text: text, Image: image, Value: value}
+	return Button{Text: text, Image: image, value: value}
+}
+
+// Value returns the value passed on from the button struct.
+func (b Button) Value() interface{} {
+	return b.fm.values[b]
 }
 
 // MarshalJSON ...
