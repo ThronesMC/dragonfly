@@ -2,6 +2,7 @@ package form
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 )
 
@@ -221,6 +222,11 @@ func NewButton(text, image string, value interface{}) Button {
 
 // Value returns the value passed on from the button struct.
 func (b Button) Value() interface{} {
+	fmt.Print(b.fm)
+	fmt.Println()
+	fmt.Print(b.fm.values)
+	fmt.Print(b)
+	fmt.Print(&b)
 	return b.fm.values[&b]
 }
 
