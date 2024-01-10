@@ -18,7 +18,7 @@ type Hopper struct {
 var hopperHash = NextHash()
 
 func (h Hopper) Hash() uint64 {
-	return hopperHash | uint64(h.Facing)
+	return hopperHash | uint64(h.Facing)<<8
 }
 
 // UseOnBlock ...
