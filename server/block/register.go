@@ -220,7 +220,7 @@ func init() {
 	world.RegisterItem(Carrot{})
 	world.RegisterItem(Chain{})
 	world.RegisterItem(Chest{})
-	world.RegisterItem(ChestMinecart{})
+	world.RegisterItem(item.ChestMinecart{})
 	world.RegisterItem(ChiseledQuartz{})
 	world.RegisterItem(Clay{})
 	world.RegisterItem(Coal{})

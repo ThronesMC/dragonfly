@@ -1,4 +1,4 @@
-package block
+package item
 
 // ChestMinecart (item only) is a minecart with a chest inside.
 type ChestMinecart struct{}
