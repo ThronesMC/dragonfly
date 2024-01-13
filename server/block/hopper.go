@@ -44,7 +44,7 @@ func (h Hopper) EncodeItem() (name string, meta int16) {
 }
 
 // EncodeBlock ...
-func (h Hopper) EncodeBlock() (name string, properties map[string]any) {
+func (h Hopper) EncodeBlock() (string, map[string]any) {
 	return "minecraft:hopper", nil
 }
 
