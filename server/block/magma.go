@@ -2,7 +2,6 @@ package block
 
 import (
 	"github.com/df-mc/dragonfly/server/block/cube"
-	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 )
 
@@ -30,9 +29,6 @@ func (Magma) LightEmissionLevel() uint8 {
 func (m Magma) EntityInside(_ cube.Pos, _ *world.World, e world.Entity) {
 	if _, ok := e.(flammableEntity); ok {
 		if l, ok := e.(livingEntity); ok && !l.AttackImmune() {
-			if pl, ok := l.(*player.Player); ok && pl.Sneaking() {
-				return
-			}
 			l.Hurt(1, MagmaDamageSource{})
 		}
 	}
