@@ -47,9 +47,9 @@ func (r RedstoneComparator) EncodeBlock() (string, map[string]any) {
 		name = "minecraft:powered_comparator"
 	}
 	return name, map[string]any{
-		"direction":           int32(horizontalDirection(r.Facing)),
-		"output_lit_bit":      boolByte(r.Powered),
-		"output_subtract_bit": boolByte(r.Subtract),
+		"minecraft:cardinal_direction": horizontalDirection(r.Facing).String(),
+		"output_lit_bit":               boolByte(r.Powered),
+		"output_subtract_bit":          boolByte(r.Subtract),
 	}
 }
 
