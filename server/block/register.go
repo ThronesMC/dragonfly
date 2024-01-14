@@ -149,7 +149,7 @@ func init() {
 	registerAll(allGlazedTerracotta())
 	registerAll(allGrindstones())
 	registerAll(allHayBales())
-	registerAll(allHoppers())
+	//registerAll(allHoppers())
 	registerAll(allItemFrames())
 	registerAll(allKelp())
 	registerAll(allLadders())

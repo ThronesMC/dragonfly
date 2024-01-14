@@ -48,9 +48,9 @@ func (h Hopper) EncodeBlock() (string, map[string]any) {
 	return "minecraft:hopper", nil
 }
 
-func allHoppers() (pumpkins []world.Block) {
+func allHoppers() (hoppers []world.Block) {
 	for i := cube.Direction(0); i <= 3; i++ {
-		pumpkins = append(pumpkins, Hopper{Facing: i})
+		hoppers = append(hoppers, Hopper{Facing: i})
 	}
 	return
 }
