@@ -81,6 +81,7 @@ func registerBlockState(s blockState, order bool) {
 	if _, ok := blockProperties[s.Name]; !ok {
 		blockProperties[s.Name] = s.Properties
 	}
+
 	rid := uint32(len(blocks))
 	blocks = append(blocks, unknownBlock{s})
 	if order {
