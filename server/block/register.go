@@ -261,7 +261,7 @@ func init() {
 	world.RegisterItem(Grindstone{})
 	world.RegisterItem(HayBale{})
 	world.RegisterItem(Honeycomb{})
-	world.RegisterItem(Hopper{})
+	//world.RegisterItem(Hopper{})
 	world.RegisterItem(Ice{})
 	world.RegisterItem(InvisibleBedrock{})
 	world.RegisterItem(IronBars{})
