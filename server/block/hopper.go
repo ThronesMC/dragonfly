@@ -45,7 +45,7 @@ func (h Hopper) EncodeItem() (name string, meta int16) {
 
 // EncodeBlock ...
 func (h Hopper) EncodeBlock() (string, map[string]any) {
-	return "minecraft:hopper", map[string]any{"minecraft:facing_direction": 0, "minecraft:toggle_bit": false}
+	return "minecraft:hopper", map[string]any{"facing_direction": 0, "toggle_bit": false}
 }
 
 func allHoppers() (hoppers []world.Block) {
