@@ -27,8 +27,8 @@ func (s Spawner) EncodeItem() (name string, meta int16) {
 	return "minecraft:mob_spawner", 0
 }
 
-// New returns a new spawner for the entity passed.
-func New(e func(mgl64.Vec3, *world.World) *living.Living, pos mgl64.Vec3, w *world.World, rate time.Duration, maxEntities int) *Spawner {
+// NewSpawner returns a new spawner for the entity passed.
+func NewSpawner(e func(mgl64.Vec3, *world.World) *living.Living, pos mgl64.Vec3, w *world.World, rate time.Duration, maxEntities int) *Spawner {
 	s := &Spawner{
 		e:           e,
 		pos:         pos,
