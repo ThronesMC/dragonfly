@@ -1048,25 +1048,17 @@ func (w *World) close() {
 
 	close(w.closing)
 	w.running.Wait()
-	w.Save(true)
-	w.conf.Log.Debugf("Closing provider...")
-	if err := w.provider().Close(); err != nil {
-		w.conf.Log.Errorf("error closing world provider: %v", err)
-	}
-}
 
-func (w *World) Save(clear bool) {
+	w.conf.Log.Debugf("Saving chunks in memory to disk...")
+
 	w.chunkMu.Lock()
 	w.lastChunk = nil
 	toSave := maps.Clone(w.chunks)
-	if clear {
-		maps.Clear(w.chunks)
-	}
+	maps.Clear(w.chunks)
 	w.chunkMu.Unlock()
 
 	for pos, c := range toSave {
-		w.saveChunk(pos, c, clear)
-		break
+		w.saveChunk(pos, c)
 	}
 
 	w.set.ref.Dec()
@@ -1075,7 +1067,14 @@ func (w *World) Save(clear bool) {
 	}
 
 	if !w.conf.ReadOnly {
+		w.conf.Log.Debugf("Updating level.dat values...")
+
 		w.provider().SaveSettings(w.set)
+	}
+
+	w.conf.Log.Debugf("Closing provider...")
+	if err := w.provider().Close(); err != nil {
+		w.conf.Log.Errorf("error closing world provider: %v", err)
 	}
 }
 
@@ -1329,7 +1328,7 @@ func (w *World) spreadLight(pos ChunkPos) {
 
 // saveChunk is called when a chunk is removed from the cache. We first compact the chunk, then we write it to
 // the provider.
-func (w *World) saveChunk(pos ChunkPos, c *Column, clearEntities bool) {
+func (w *World) saveChunk(pos ChunkPos, c *Column) {
 	c.Lock()
 	if !w.conf.ReadOnly && (len(c.BlockEntities) > 0 || len(c.Entities) > 0 || c.modified) {
 		c.Compact()
@@ -1338,16 +1337,11 @@ func (w *World) saveChunk(pos ChunkPos, c *Column, clearEntities bool) {
 		}
 	}
 	ent := c.Entities
-	if clearEntities {
-		c.Entities = nil
-	}
-
+	c.Entities = nil
 	c.Unlock()
 
-	if clearEntities {
-		for _, e := range ent {
-			_ = e.Close()
-		}
+	for _, e := range ent {
+		_ = e.Close()
 	}
 }
 
@@ -1377,7 +1371,7 @@ func (w *World) chunkCacheJanitor() {
 			w.chunkMu.Unlock()
 
 			for pos, c := range chunksToRemove {
-				w.saveChunk(pos, c, true)
+				w.saveChunk(pos, c)
 				delete(chunksToRemove, pos)
 			}
 		case <-w.closing:
