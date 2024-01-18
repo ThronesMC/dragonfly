@@ -1471,6 +1471,22 @@ func (p *Player) UseItemOnEntity(e world.Entity) bool {
 	return true
 }
 
+// LookAt makes a player look at a certain 'v' vector
+func (p *Player) LookAt(v mgl64.Vec3) {
+	vt := v.Y() - (p.Position().Y() + p.EyeHeight())
+	hz := math.Sqrt(math.Pow(v.X()-p.Position().X(), 2) + math.Pow(v.Z()-p.Position().Z(), 2))
+	pitch := (-math.Atan2(vt, hz) / math.Pi) * 180
+
+	dz := v.Z() - p.Position().Z()
+	dx := v.X() - p.Position().X()
+	yaw := (math.Atan2(dz, dx)/math.Pi)*180 - 90
+	if yaw < 0 {
+		yaw += 360.0
+	}
+
+	p.SetRotation(yaw, pitch)
+}
+
 // AttackEntity uses the item held in the main hand of the player to attack the entity passed, provided it is
 // within range of the player.
 // The damage dealt to the entity will depend on the item held by the player and any effects the player may
