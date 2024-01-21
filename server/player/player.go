@@ -869,6 +869,10 @@ func (p *Player) dropContents() {
 	}
 }
 
+func (p *Player) DropContents() {
+	p.dropContents()
+}
+
 // Respawn spawns the player after it dies, so that its health is replenished and it is spawned in the world
 // again. Nothing will happen if the player does not have a session connected to it.
 func (p *Player) Respawn() {
