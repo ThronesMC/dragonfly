@@ -1028,6 +1028,10 @@ func (s *Session) openNormalContainer(b block.Container, pos cube.Pos) {
 	s.sendInv(b.Inventory(), uint32(nextID))
 }
 
+func (s *Session) OpenNormalContainer(b block.Container, pos cube.Pos) {
+	s.openNormalContainer(b, pos)
+}
+
 // ViewSlotChange ...
 func (s *Session) ViewSlotChange(slot int, newItem item.Stack) {
 	if !s.containerOpened.Load() {
