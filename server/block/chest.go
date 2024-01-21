@@ -57,6 +57,10 @@ func (c Chest) Inventory() *inventory.Inventory {
 	return c.inventory
 }
 
+func (c Chest) SetInventory(inv *inventory.Inventory) {
+	c.inventory = inv
+}
+
 // WithName returns the chest after applying a specific name to the block.
 func (c Chest) WithName(a ...any) world.Item {
 	c.CustomName = strings.TrimSuffix(fmt.Sprintln(a...), "\n")
