@@ -2,6 +2,7 @@ package player
 
 import (
 	"fmt"
+	"github.com/sandertv/gophertunnel/minecraft/protocol"
 	"math"
 	"math/rand"
 	"net"
@@ -1178,6 +1179,11 @@ func (p *Player) SetHeldItems(mainHand, offHand item.Stack) {
 // ender chests anywhere.
 func (p *Player) EnderChestInventory() *inventory.Inventory {
 	return p.enderChest
+}
+
+func (p *Player) CursorInventory() *inventory.Inventory {
+	inv, _ := p.Session().InvByID(protocol.ContainerCursor)
+	return inv
 }
 
 // SetGameMode sets the game mode of a player. The game mode specifies the way that the player can interact

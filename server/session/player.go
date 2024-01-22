@@ -257,6 +257,10 @@ func (s *Session) invByID(id int32) (*inventory.Inventory, bool) {
 	return nil, false
 }
 
+func (s *Session) InvByID(id int32) (*inventory.Inventory, bool) {
+	return s.invByID(id)
+}
+
 // Disconnect disconnects the client and ultimately closes the session. If the message passed is non-empty,
 // it will be shown to the client.
 func (s *Session) Disconnect(message string) {
