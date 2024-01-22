@@ -20,7 +20,7 @@ type Inventory struct {
 	h     Handler
 	slots []item.Stack
 
-	f      func(slot int, before, after item.Stack)
+	F      func(slot int, before, after item.Stack)
 	canAdd func(s item.Stack, slot int) bool
 }
 
@@ -39,7 +39,7 @@ func New(size int, f func(slot int, before, after item.Stack)) *Inventory {
 	if f == nil {
 		f = func(slot int, before, after item.Stack) {}
 	}
-	return &Inventory{h: NopHandler{}, slots: make([]item.Stack, size), f: f, canAdd: func(s item.Stack, slot int) bool { return true }}
+	return &Inventory{h: NopHandler{}, slots: make([]item.Stack, size), F: f, canAdd: func(s item.Stack, slot int) bool { return true }}
 }
 
 // Item attempts to obtain an item from a specific slot in the inventory. If an item was present in that slot,
@@ -326,7 +326,7 @@ func (inv *Inventory) setItem(slot int, it item.Stack) func() {
 	before := inv.slots[slot]
 	inv.slots[slot] = it
 	return func() {
-		inv.f(slot, before, it)
+		inv.F(slot, before, it)
 	}
 }
 
@@ -351,7 +351,7 @@ func (inv *Inventory) Close() error {
 	defer inv.mu.Unlock()
 
 	inv.check()
-	inv.f = func(int, item.Stack, item.Stack) {}
+	inv.F = func(int, item.Stack, item.Stack) {}
 	return nil
 }
 
