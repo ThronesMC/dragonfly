@@ -1175,15 +1175,15 @@ func (p *Player) SetHeldItems(mainHand, offHand item.Stack) {
 	_ = p.offHand.SetItem(0, offHand)
 }
 
-// EnderChestInventory returns the player's ender chest inventory. Its accessed by the player when opening
+// EnderChestInventory returns the player's ender chest inventory. It's accessed by the player when opening
 // ender chests anywhere.
 func (p *Player) EnderChestInventory() *inventory.Inventory {
 	return p.enderChest
 }
 
-func (p *Player) CursorInventory() *inventory.Inventory {
-	inv, _ := p.Session().InvByID(protocol.ContainerCursor)
-	return inv
+func (p *Player) CursorInventory() (*inventory.Inventory, bool) {
+	inv, ok := p.Session().InvByID(protocol.ContainerCursor)
+	return inv, ok
 }
 
 // SetGameMode sets the game mode of a player. The game mode specifies the way that the player can interact
