@@ -68,7 +68,7 @@ type Session struct {
 	breakingPos cube.Pos
 
 	inTransaction, containerOpened atomic.Bool
-	queuedSlotChanges              atomic.Value[[]item.Stack]
+	queuedSlotChanges              atomic.Value[map[int]item.Stack]
 	openedWindowID                 atomic.Uint32
 	openedContainerID              atomic.Uint32
 	openedWindow                   atomic.Value[*inventory.Inventory]
@@ -158,6 +158,7 @@ func New(conn Conn, maxChunkRadius int, log Logger, joinMessage, quitMessage str
 		entityRuntimeIDs:       map[world.Entity]uint64{},
 		entities:               map[uint64]world.Entity{},
 		hiddenEntities:         map[world.Entity]struct{}{},
+		queuedSlotChanges:      *atomic.NewValue[map[int]item.Stack](map[int]item.Stack{}),
 		blobs:                  map[uint64][]byte{},
 		chunkRadius:            int32(r),
 		maxChunkRadius:         int32(maxChunkRadius),
