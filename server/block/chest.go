@@ -42,7 +42,9 @@ func NewChest() Chest {
 		inventory: inventory.New(27, func(slot int, _, item item.Stack) {
 			m.RLock()
 			defer m.RUnlock()
+			fmt.Println("test2")
 			for viewer := range v {
+				fmt.Println("test3")
 				viewer.ViewSlotChange(slot, item)
 			}
 		}),
