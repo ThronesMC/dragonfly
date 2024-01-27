@@ -80,7 +80,7 @@ func (h PlayerAuthInputHandler) handleActions(pk *packet.PlayerAuthInput, s *Ses
 
 	if pk.InputData&packet.InputFlagPerformItemStackRequest != 0 {
 		s.inTransaction.Store(true)
-		defer s.inTransaction.Store(false)
+		defer s.DisableInTransaction()
 
 		// As of 1.18 this is now used for sending item stack requests such as when mining a block.
 		sh := s.handlers[packet.IDItemStackRequest].(*ItemStackRequestHandler)

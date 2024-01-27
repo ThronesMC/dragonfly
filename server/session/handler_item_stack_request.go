@@ -49,7 +49,7 @@ func (h *ItemStackRequestHandler) Handle(p packet.Packet, s *Session) error {
 	h.current = time.Now()
 
 	s.inTransaction.Store(true)
-	defer s.inTransaction.Store(false)
+	defer s.DisableInTransaction()
 
 	for _, req := range pk.Requests {
 		if err := h.handleRequest(req, s); err != nil {

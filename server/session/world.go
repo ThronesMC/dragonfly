@@ -194,6 +194,13 @@ func (s *Session) HideEntity(e world.Entity) {
 	s.writePacket(&packet.RemoveActor{EntityUniqueID: int64(id)})
 }
 
+func (s *Session) DisableInTransaction() {
+	s.inTransaction.Store(false)
+	for slot, it := range s.queuedSlotChanges.Load() {
+		s.ViewSlotChange(slot, it)
+	}
+}
+
 // ViewEntityMovement ...
 func (s *Session) ViewEntityMovement(e world.Entity, pos mgl64.Vec3, rot cube.Rotation, onGround bool) {
 	id := s.entityRuntimeID(e)
@@ -1039,6 +1046,9 @@ func (s *Session) ViewSlotChange(slot int, newItem item.Stack) {
 	}
 	if s.inTransaction.Load() {
 		// Don't send slot changes to the player itself.
+		queuedSlotChanges := s.queuedSlotChanges.Load()
+		queuedSlotChanges[slot] = newItem
+		s.queuedSlotChanges.Store(queuedSlotChanges)
 		return
 	}
 	s.writePacket(&packet.InventorySlot{

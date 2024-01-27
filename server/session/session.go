@@ -68,6 +68,7 @@ type Session struct {
 	breakingPos cube.Pos
 
 	inTransaction, containerOpened atomic.Bool
+	queuedSlotChanges              atomic.Value[[]item.Stack]
 	openedWindowID                 atomic.Uint32
 	openedContainerID              atomic.Uint32
 	openedWindow                   atomic.Value[*inventory.Inventory]
