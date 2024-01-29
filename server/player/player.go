@@ -3,6 +3,7 @@ package player
 import (
 	"fmt"
 	"github.com/sandertv/gophertunnel/minecraft/protocol"
+	"github.com/sandertv/gophertunnel/minecraft/text"
 	"math"
 	"math/rand"
 	"net"
@@ -3108,5 +3109,5 @@ func (p *Player) resendBlock(pos cube.Pos, w *world.World) {
 // format is a utility function to format a list of values to have spaces between them, but no newline at the
 // end, which is typically used for sending messages, popups and tips.
 func format(a []any) string {
-	return strings.TrimSuffix(strings.TrimSuffix(fmt.Sprintln(a...), "\n"), "\n")
+	return text.Colourf(strings.TrimSuffix(strings.TrimSuffix(fmt.Sprintln(a...), "\n"), "\n"))
 }
