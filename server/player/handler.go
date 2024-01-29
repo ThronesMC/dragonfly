@@ -110,6 +110,8 @@ type Handler interface {
 	// HandleLecternPageTurn handles the player turning a page in a lectern. ctx.Cancel() may be called to cancel the
 	// page turn. The page number may be changed by assigning to *page.
 	HandleLecternPageTurn(ctx *event.Context, pos cube.Pos, oldPage int, newPage *int)
+	// HandleSleep handles the player going to sleep. ctx.Cancel() may be called to cancel the sleep.
+	HandleSleep(ctx *event.Context, sendReminder *bool)
 	// HandleItemDamage handles the event wherein the item either held by the player or as armour takes
 	// damage through usage.
 	// The type of the item may be checked to determine whether it was armour or a tool used. The damage to
@@ -161,6 +163,7 @@ func (NopHandler) HandleBlockPick(*event.Context, cube.Pos, world.Block)        
 func (NopHandler) HandleSignEdit(*event.Context, bool, string, string)                        {}
 func (NopHandler) HandleLecternPageTurn(*event.Context, cube.Pos, int, *int)                  {}
 func (NopHandler) HandleItemPickup(*event.Context, *item.Stack)                               {}
+func (NopHandler) HandleSleep(*event.Context, *bool)                                          {}
 func (NopHandler) HandleItemUse(*event.Context)                                               {}
 func (NopHandler) HandleItemUseOnBlock(*event.Context, cube.Pos, cube.Face, mgl64.Vec3)       {}
 func (NopHandler) HandleItemUseOnEntity(*event.Context, world.Entity)                         {}

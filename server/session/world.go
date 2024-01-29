@@ -339,6 +339,14 @@ func (s *Session) ViewItemCooldown(item world.Item, duration time.Duration) {
 	})
 }
 
+// ViewSleepingPlayers ...
+func (s *Session) ViewSleepingPlayers(sleeping, max int) {
+	s.writePacket(&packet.LevelEvent{
+		EventType: packet.LevelEventSleepingPlayers,
+		EventData: int32((max << 16) | sleeping),
+	})
+}
+
 // ViewParticle ...
 func (s *Session) ViewParticle(pos mgl64.Vec3, p world.Particle) {
 	switch pa := p.(type) {
@@ -1142,6 +1150,14 @@ func (s *Session) ViewWeather(raining, thunder bool) {
 		pk.EventType, pk.EventData = packet.LevelEventStartThunderstorm, int32(rand.Intn(50000)+10000)
 	}
 	s.writePacket(pk)
+}
+
+// ViewEntityWake ...
+func (s *Session) ViewEntityWake(e world.Entity) {
+	s.writePacket(&packet.Animate{
+		EntityRuntimeID: s.entityRuntimeID(e),
+		ActionType:      packet.AnimateActionStopSleep,
+	})
 }
 
 // nextWindowID produces the next window ID for a new window. It is an int of 1-99.
