@@ -2,6 +2,7 @@ package world
 
 import (
 	"errors"
+	"fmt"
 	"github.com/df-mc/goleveldb/leveldb"
 	"math/rand"
 	"sync"
@@ -1103,26 +1104,36 @@ func (w *World) close() {
 	// Let user code run anything that needs to be finished before the World is closed.
 	w.Handler().HandleClose()
 	w.Handle(NopHandler{})
+	fmt.Println(1)
 
 	close(w.closing)
+	fmt.Println(2)
 	w.running.Wait()
+	fmt.Println(3)
 
 	w.conf.Log.Debugf("Saving chunks in memory to disk...")
 
 	w.chunkMu.Lock()
 	w.lastChunk = nil
+	fmt.Println(4)
 	toSave := maps.Clone(w.chunks)
+	fmt.Println(5)
 	maps.Clear(w.chunks)
+	fmt.Println(6)
 	w.chunkMu.Unlock()
 
 	for pos, c := range toSave {
 		w.saveChunk(pos, c)
 	}
+	fmt.Println(7)
 
 	w.set.ref.Dec()
+	fmt.Println(8)
 	if !w.advance {
+		fmt.Println("9OWO")
 		return
 	}
+	fmt.Println(10)
 
 	//if !w.conf.ReadOnly {
 	//	w.conf.Log.Debugf("Updating level.dat values...")
@@ -1134,6 +1145,7 @@ func (w *World) close() {
 	if err := w.provider().Close(); err != nil {
 		w.conf.Log.Errorf("error closing world provider: %v", err)
 	}
+	fmt.Println(11)
 }
 
 // allViewers returns a list of all loaders of the world, regardless of where in the world they are viewing.
