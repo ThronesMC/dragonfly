@@ -1124,11 +1124,11 @@ func (w *World) close() {
 		return
 	}
 
-	if !w.conf.ReadOnly {
-		w.conf.Log.Debugf("Updating level.dat values...")
-
-		w.provider().SaveSettings(w.set)
-	}
+	//if !w.conf.ReadOnly {
+	//	w.conf.Log.Debugf("Updating level.dat values...")
+	//
+	//	w.provider().SaveSettings(w.set)
+	//}
 
 	w.conf.Log.Debugf("Closing provider...")
 	if err := w.provider().Close(); err != nil {
