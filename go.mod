@@ -3,17 +3,16 @@ module github.com/df-mc/dragonfly
 go 1.21
 
 require (
-	github.com/bedrock-gophers/living v0.0.0-20231216224824-0e1599282e89
 	github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9
 	github.com/cespare/xxhash/v2 v2.2.0
 	github.com/df-mc/atomic v1.10.0
 	github.com/df-mc/goleveldb v1.1.9
-	github.com/df-mc/worldupgrader v1.0.11
+	github.com/df-mc/worldupgrader v1.0.12
 	github.com/go-gl/mathgl v1.1.0
 	github.com/google/uuid v1.5.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/rogpeppe/go-internal v1.12.0
-	github.com/sandertv/gophertunnel v1.34.1
+	github.com/sandertv/gophertunnel v1.35.0
 	github.com/segmentio/fasthash v1.0.3
 	github.com/sirupsen/logrus v1.9.3
 	golang.org/x/exp v0.0.0-20231214170342-aacd6d4b4611
@@ -27,6 +26,7 @@ require (
 	github.com/klauspost/compress v1.17.4 // indirect
 	github.com/muhammadmuzzammil1998/jsonc v1.0.0 // indirect
 	github.com/sandertv/go-raknet v1.12.1 // indirect
+	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/crypto v0.16.0 // indirect
 	golang.org/x/image v0.14.0 // indirect
 	golang.org/x/net v0.19.0 // indirect
