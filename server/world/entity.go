@@ -1,6 +1,7 @@
 package world
 
 import (
+	"fmt"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/go-gl/mathgl/mgl64"
 	"golang.org/x/exp/maps"
@@ -145,6 +146,7 @@ func (reg EntityRegistry) Types() []EntityType {
 }
 
 func (reg EntityRegistry) AddType(name string, et EntityType) {
+	fmt.Println(reg.ent)
 	if _, ok := reg.ent[name]; ok {
 		panic("cannot register the same entity (" + name + ") twice")
 	}
