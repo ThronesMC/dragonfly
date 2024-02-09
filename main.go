@@ -33,7 +33,6 @@ func main() {
 
 	srv := conf.New()
 	srv.CloseOnProgramEnd()
-
 	srv.Listen()
 	for srv.Accept(func(p *player.Player) {
 		p.ShowCoordinates()
