@@ -143,3 +143,10 @@ func (reg EntityRegistry) Lookup(name string) (EntityType, bool) {
 func (reg EntityRegistry) Types() []EntityType {
 	return maps.Values(reg.ent)
 }
+
+func (reg EntityRegistry) AddType(name string, et EntityType) {
+	if _, ok := reg.ent[name]; ok {
+		panic("cannot register the same entity (" + name + ") twice")
+	}
+	reg.ent[name] = et
+}
