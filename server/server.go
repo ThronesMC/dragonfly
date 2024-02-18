@@ -422,20 +422,25 @@ func (srv *Server) checkNetIsolation() {
 // handleSessionClose handles the closing of a session. It removes the player
 // of the session from the server.
 func (srv *Server) handleSessionClose(c session.Controllable) {
+	fmt.Println("s0")
 	srv.pmu.Lock()
 	p, ok := srv.p[c.UUID()]
 	delete(srv.p, c.UUID())
+	fmt.Println("s1")
 	srv.pmu.Unlock()
 	if !ok {
+		fmt.Println("s2notok")
 		// When a player disconnects immediately after a session is started, it might not be added to the players map
 		// yet. This is expected, but we need to be careful not to crash when this happens.
 		return
 	}
-
+	fmt.Println("s3")
 	if err := srv.conf.PlayerProvider.Save(p.UUID(), p.Data()); err != nil {
 		srv.conf.Log.Errorf("Error while saving data: %v", err)
 	}
+	fmt.Println("s4")
 	srv.pwg.Done()
+	fmt.Println("s5")
 }
 
 // createPlayer creates a new player instance using the UUID and connection
