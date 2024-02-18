@@ -221,6 +221,7 @@ func (srv *Server) close() {
 	}
 
 	srv.conf.Log.Debugf("Closing worlds...")
+	fmt.Println([]*world.World{srv.end, srv.nether, srv.world})
 	for _, w := range []*world.World{srv.end, srv.nether, srv.world} {
 		fmt.Println(srv.world.Name())
 		if err := w.Close(); err != nil {

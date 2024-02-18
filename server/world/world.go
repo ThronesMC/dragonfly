@@ -1125,15 +1125,11 @@ func (w *World) close() {
 	for pos, c := range toSave {
 		w.saveChunk(pos, c)
 	}
-	fmt.Println(7)
 
 	w.set.ref.Dec()
-	fmt.Println(8)
 	if !w.advance {
-		fmt.Println("9OWO")
 		return
 	}
-	fmt.Println(10)
 
 	//if !w.conf.ReadOnly {
 	//	w.conf.Log.Debugf("Updating level.dat values...")
