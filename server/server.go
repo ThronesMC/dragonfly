@@ -196,9 +196,12 @@ func (srv *Server) CloseOnProgramEnd() {
 
 // Close closes the server, making any call to Run/Accept cancel immediately.
 func (srv *Server) Close() error {
+	fmt.Println("server close 0")
 	if !srv.started.Load() {
 		panic("server not yet running")
 	}
+
+	fmt.Println("server close 1")
 	srv.once.Do(srv.close)
 	return nil
 }
@@ -221,8 +224,6 @@ func (srv *Server) close() {
 	}
 
 	srv.conf.Log.Debugf("Closing worlds...")
-
-	fmt.Println("test")
 	for _, w := range []*world.World{srv.end, srv.nether, srv.world} {
 		fmt.Println(srv.world.Name())
 		if err := w.Close(); err != nil {
