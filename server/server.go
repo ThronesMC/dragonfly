@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/df-mc/atomic"
 	"github.com/df-mc/dragonfly/server/cmd"
+	"github.com/df-mc/dragonfly/server/event"
 	"github.com/df-mc/dragonfly/server/internal/blockinternal"
 	"github.com/df-mc/dragonfly/server/internal/iteminternal"
 	"github.com/df-mc/dragonfly/server/internal/sliceutil"
@@ -114,6 +115,14 @@ func (srv *Server) Accept(f HandleFunc) bool {
 	return true
 }
 
+// Start starts the server through Accept. Basically just a shortcut.
+func (srv *Server) Start() {
+	for srv.Accept(func(p *player.Player) {
+		srv.World().Handler().HandlePlayerJoin(event.C(), p)
+	}) {
+	}
+}
+
 // World returns the overworld of the server. Players will be spawned in this
 // world and this world will be read from and written to when the world is
 // edited.
@@ -196,12 +205,9 @@ func (srv *Server) CloseOnProgramEnd() {
 
 // Close closes the server, making any call to Run/Accept cancel immediately.
 func (srv *Server) Close() error {
-	fmt.Println("server close 0")
 	if !srv.started.Load() {
 		panic("server not yet running")
 	}
-
-	fmt.Println("server close 1")
 	srv.once.Do(srv.close)
 	return nil
 }
@@ -225,7 +231,6 @@ func (srv *Server) close() {
 
 	srv.conf.Log.Debugf("Closing worlds...")
 	for _, w := range []*world.World{srv.end, srv.nether, srv.world} {
-		fmt.Println(srv.world.Name())
 		if err := w.Close(); err != nil {
 			srv.conf.Log.Errorf("Error closing %v: %v", w.Dimension(), err)
 		}
@@ -423,25 +428,19 @@ func (srv *Server) checkNetIsolation() {
 // handleSessionClose handles the closing of a session. It removes the player
 // of the session from the server.
 func (srv *Server) handleSessionClose(c session.Controllable) {
-	fmt.Println("s0")
 	srv.pmu.Lock()
 	p, ok := srv.p[c.UUID()]
 	delete(srv.p, c.UUID())
-	fmt.Println("s1")
 	srv.pmu.Unlock()
 	if !ok {
-		fmt.Println("s2notok")
 		// When a player disconnects immediately after a session is started, it might not be added to the players map
 		// yet. This is expected, but we need to be careful not to crash when this happens.
 		return
 	}
-	fmt.Println("s3")
 	if err := srv.conf.PlayerProvider.Save(p.UUID(), p.Data()); err != nil {
 		srv.conf.Log.Errorf("Error while saving data: %v", err)
 	}
-	fmt.Println("s4")
 	srv.pwg.Done()
-	fmt.Println("s5")
 }
 
 // createPlayer creates a new player instance using the UUID and connection
