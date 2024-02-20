@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/df-mc/atomic"
 	"github.com/df-mc/dragonfly/server/cmd"
-	"github.com/df-mc/dragonfly/server/event"
 	"github.com/df-mc/dragonfly/server/internal/blockinternal"
 	"github.com/df-mc/dragonfly/server/internal/iteminternal"
 	"github.com/df-mc/dragonfly/server/internal/sliceutil"
@@ -118,7 +117,7 @@ func (srv *Server) Accept(f HandleFunc) bool {
 // Start starts the server through Accept. Basically just a shortcut.
 func (srv *Server) Start() {
 	for srv.Accept(func(p *player.Player) {
-		srv.World().Handler().HandlePlayerJoin(event.C(), p)
+		p.Handler().HandlePlayerJoin(p)
 	}) {
 	}
 }

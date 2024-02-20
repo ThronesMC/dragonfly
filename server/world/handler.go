@@ -3,15 +3,12 @@ package world
 import (
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/event"
-	"github.com/df-mc/dragonfly/server/player"
 	"github.com/go-gl/mathgl/mgl64"
 )
 
 // Handler handles events that are called by a world. Implementations of Handler may be used to listen to
 // specific events such as when an entity is added to the world.
 type Handler interface {
-	// HandlePlayerJoin handles the player logging into the server. It is always called when the player is joining.
-	HandlePlayerJoin(ctx *event.Context, pl *player.Player)
 	// HandleLiquidFlow handles the flowing of a liquid from one block position from into another block
 	// position into. The liquid that will replace the block is also passed. This replaced block might
 	// also be a Liquid. The Liquid's depth and falling state can be checked to see if the resulting
@@ -56,7 +53,6 @@ var _ Handler = (*NopHandler)(nil)
 // Users may embed NopHandler to avoid having to implement each method.
 type NopHandler struct{}
 
-func (NopHandler) HandlePlayerJoin(*event.Context, *player.Player)                    {}
 func (NopHandler) HandleLiquidFlow(*event.Context, cube.Pos, cube.Pos, Liquid, Block) {}
 func (NopHandler) HandleLiquidDecay(*event.Context, cube.Pos, Liquid, Liquid)         {}
 func (NopHandler) HandleLiquidHarden(*event.Context, cube.Pos, Block, Block, Block)   {}
