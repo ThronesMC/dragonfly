@@ -114,14 +114,6 @@ func (srv *Server) Accept(f HandleFunc) bool {
 	return true
 }
 
-// Start starts the server through Accept. Basically just a shortcut.
-func (srv *Server) Start() {
-	for srv.Accept(func(p *player.Player) {
-		p.Handler().HandlePlayerJoin(p)
-	}) {
-	}
-}
-
 // World returns the overworld of the server. Players will be spawned in this
 // world and this world will be read from and written to when the world is
 // edited.
