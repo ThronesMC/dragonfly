@@ -186,7 +186,9 @@ func (e *Ent) Tick(w *world.World, current int64) {
 
 // Close closes the Ent and removes the associated entity from the world.
 func (e *Ent) Close() error {
-	_ = e.viewLayer.Close()
+	if e.viewLayer != nil {
+		_ = e.viewLayer.Close()
+	}
 	e.World().RemoveEntity(e)
 	return nil
 }
