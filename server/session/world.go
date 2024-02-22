@@ -941,7 +941,7 @@ func (s *Session) ViewEntityAction(e world.Entity, a world.EntityAction) {
 // ViewEntityState ...
 func (s *Session) ViewEntityState(e world.Entity) {
 	metadata := s.parseEntityMetadata(e)
-	if v, ok := e.(LayerViewer); ok {
+	if v, ok := e.(LayerViewer); ok && s.viewLayer != nil {
 		if nt := s.viewLayer.NameTag(v); len(nt) > 0 {
 			metadata[protocol.EntityDataKeyName] = nt
 		}
