@@ -10,6 +10,7 @@ import (
 // NewText creates and returns a new Text entity with the text and position provided.
 func NewText(text string, pos mgl64.Vec3) *Ent {
 	e := Config{Behaviour: textConf.New()}.New(TextType{}, pos)
+	e.viewLayer = world.NewViewLayer()
 	e.SetNameTag(text)
 	return e
 }

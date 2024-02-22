@@ -1,6 +1,8 @@
 package session
 
-import "github.com/df-mc/dragonfly/server/world"
+import (
+	"github.com/df-mc/dragonfly/server/world"
+)
 
 type LayerViewer interface {
 	ViewLayer() *world.ViewLayer

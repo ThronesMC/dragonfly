@@ -43,6 +43,8 @@ type Ent struct {
 
 	fireDuration time.Duration
 	age          time.Duration
+
+	viewLayer *world.ViewLayer
 }
 
 // Explode propagates the explosion behaviour of the underlying Behaviour.
@@ -105,6 +107,10 @@ func (e *Ent) Age() time.Duration {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	return e.age
+}
+
+func (e *Ent) ViewLayer() *world.ViewLayer {
+	return e.viewLayer
 }
 
 // OnFireDuration ...
@@ -180,6 +186,7 @@ func (e *Ent) Tick(w *world.World, current int64) {
 
 // Close closes the Ent and removes the associated entity from the world.
 func (e *Ent) Close() error {
+	_ = e.viewLayer.Close()
 	e.World().RemoveEntity(e)
 	return nil
 }
