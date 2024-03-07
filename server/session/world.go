@@ -1199,6 +1199,10 @@ func (s *Session) entityRuntimeID(e world.Entity) uint64 {
 	return id
 }
 
+func (s *Session) EntityRuntimeID(e world.Entity) uint64 {
+	return s.entityRuntimeID(e)
+}
+
 // entityFromRuntimeID attempts to return an entity by its runtime ID. False is returned if no entity with the
 // ID could be found.
 func (s *Session) entityFromRuntimeID(id uint64) (world.Entity, bool) {
