@@ -315,6 +315,11 @@ func (s *Session) ClientData() login.ClientData {
 	return s.conn.ClientData()
 }
 
+func (s *Session) NextEntityRuntimeId() uint64 {
+	s.currentEntityRuntimeID++
+	return s.currentEntityRuntimeID
+}
+
 // handlePackets continuously handles incoming packets from the connection. It processes them accordingly.
 // Once the connection is closed, handlePackets will return.
 func (s *Session) handlePackets() {
