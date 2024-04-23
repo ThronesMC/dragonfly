@@ -2,6 +2,7 @@ package world
 
 import (
 	"github.com/df-mc/dragonfly/server/block/cube"
+	"github.com/df-mc/dragonfly/server/entity"
 	"github.com/go-gl/mathgl/mgl64"
 	"golang.org/x/exp/maps"
 	"io"
@@ -130,6 +131,11 @@ func (conf EntityRegistryConfig) New(ent []EntityType) EntityRegistry {
 // EntityRegistry.
 func (reg EntityRegistry) Config() EntityRegistryConfig {
 	return reg.conf
+}
+
+// SetDefault sets the EntityRegistryConfig to default.
+func (reg EntityRegistry) SetDefault() {
+	reg.conf = entity.DefaultRegistry.conf
 }
 
 // Lookup looks up an EntityType by its name. If found, the EntityType is
