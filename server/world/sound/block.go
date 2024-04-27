@@ -182,6 +182,12 @@ type ComposterReady struct{ sound }
 // LecternBookPlace is a sound played when a book is placed in a lectern.
 type LecternBookPlace struct{ sound }
 
+// SignWaxed is a sound played when a sign is waxed.
+type SignWaxed struct{ sound }
+
+// WaxedSignFailedInteraction is a sound played when a player tries to interact with a waxed sign.
+type WaxedSignFailedInteraction struct{ sound }
+
 // PowerOn is a sound played when a redstone component is powered on.
 type PowerOn struct{ sound }
 
