@@ -86,12 +86,12 @@ func (d DoubleFlower) HasLiquidDrops() bool {
 
 // EncodeItem ...
 func (d DoubleFlower) EncodeItem() (name string, meta int16) {
-	return "minecraft:" + d.Type.String(), 0
+	return "minecraft:double_plant", int16(d.Type.Uint8())
 }
 
 // EncodeBlock ...
 func (d DoubleFlower) EncodeBlock() (string, map[string]any) {
-	return "minecraft:" + d.Type.String(), map[string]any{"upper_block_bit": d.UpperPart}
+	return "minecraft:double_plant", map[string]any{"double_plant_type": d.Type.String(), "upper_block_bit": d.UpperPart}
 }
 
 // allDoubleFlowers ...

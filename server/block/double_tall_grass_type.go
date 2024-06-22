@@ -31,9 +31,9 @@ func (t doubleTallGrass) Uint8() uint8 {
 func (t doubleTallGrass) Name() string {
 	switch t {
 	case 0:
-		return "Tall Grass"
+		return "Grass"
 	case 1:
-		return "Large Fern"
+		return "Fern"
 	}
 	panic("unknown double tall grass type")
 }
@@ -42,9 +42,9 @@ func (t doubleTallGrass) Name() string {
 func (t doubleTallGrass) String() string {
 	switch t {
 	case 0:
-		return "tall_grass"
+		return "grass"
 	case 1:
-		return "large_fern"
+		return "fern"
 	}
 	panic("unknown double tall grass type")
 }

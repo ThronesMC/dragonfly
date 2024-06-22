@@ -218,15 +218,7 @@ func (inv *Inventory) RemoveItemFunc(n int, comparable func(stack item.Stack) bo
 		if slotIt.Empty() || !comparable(slotIt) {
 			continue
 		}
-		c := slotIt.Count() - n
-
-		var f func()
-		if c <= 0 {
-			f = inv.setItem(slot, item.Stack{})
-		} else {
-			f = inv.setItem(slot, slotIt.Grow(-n))
-		}
-
+		f := inv.setItem(slot, slotIt.Grow(-n))
 		//noinspection GoDeferInLoop
 		defer f()
 

@@ -53,18 +53,15 @@ func (c CoralBlock) BreakInfo() BreakInfo {
 
 // EncodeBlock ...
 func (c CoralBlock) EncodeBlock() (name string, properties map[string]any) {
-	if c.Dead {
-		return "minecraft:dead_" + c.Type.String() + "_coral_block", nil
-	}
-	return "minecraft:" + c.Type.String() + "_coral_block", nil
+	return "minecraft:coral_block", map[string]any{"coral_color": c.Type.Colour().SilverString(), "dead_bit": c.Dead}
 }
 
 // EncodeItem ...
 func (c CoralBlock) EncodeItem() (name string, meta int16) {
 	if c.Dead {
-		return "minecraft:dead_" + c.Type.String() + "_coral_block", 0
+		return "minecraft:coral_block", int16(c.Type.Uint8() | 8)
 	}
-	return "minecraft:" + c.Type.String() + "_coral_block", 0
+	return "minecraft:coral_block", int16(c.Type.Uint8())
 }
 
 // allCoralBlocks returns a list of all coral block variants
