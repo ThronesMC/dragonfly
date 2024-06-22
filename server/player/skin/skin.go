@@ -7,7 +7,7 @@ import (
 
 // Skin holds the data of a skin that a player has equipped. It includes geometry data, the texture and the
 // cape, if one is present.
-// Skin implements the image.Image interface to ease working with the value as an image.
+// Skin implements the image.Image interface to ease working with the value as an image.git fet
 type Skin struct {
 	w, h int
 	// Persona specifies if the skin uses the persona skin system.

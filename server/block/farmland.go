@@ -20,7 +20,7 @@ type Farmland struct {
 // SoilFor ...
 func (f Farmland) SoilFor(block world.Block) bool {
 	switch block.(type) {
-	case ShortGrass, Fern, DoubleTallGrass, Flower, DoubleFlower, NetherSprouts:
+	case TallGrass, DoubleTallGrass, Flower, DoubleFlower, NetherSprouts:
 		return true
 	}
 	return false

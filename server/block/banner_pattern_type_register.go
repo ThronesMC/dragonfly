@@ -47,8 +47,6 @@ func init() {
 	registerBannerPattern("tts", TrianglesTopBannerPattern())
 	registerBannerPattern("glb", GlobeBannerPattern())
 	registerBannerPattern("pig", PiglinBannerPattern())
-	registerBannerPattern("flw", FlowBannerPattern())
-	registerBannerPattern("gus", GusterBannerPattern())
 }
 
 // registerBannerPattern registers a banner pattern with the ID passed.

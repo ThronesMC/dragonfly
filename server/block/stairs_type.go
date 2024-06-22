@@ -105,8 +105,6 @@ func encodeStairsBlock(block world.Block) string {
 			return "mossy_stone_brick"
 		}
 		return "stone_brick"
-	case Tuff:
-		return "tuff"
 	}
 	panic("invalid block used for stairs")
 }
@@ -141,7 +139,6 @@ func StairsBlocks() []world.Block {
 		StoneBricks{Type: MossyStoneBricks()},
 		StoneBricks{},
 		Stone{},
-		Tuff{},
 	}
 	for _, p := range PrismarineTypes() {
 		b = append(b, Prismarine{Type: p})

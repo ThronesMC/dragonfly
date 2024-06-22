@@ -27,17 +27,17 @@ var plantSelection = []world.Block{
 // init adds extra variants of TallGrass to the plant selection.
 func init() {
 	for i := 0; i < 8; i++ {
-		plantSelection = append(plantSelection, Fern{})
+		plantSelection = append(plantSelection, TallGrass{Type: FernTallGrass()})
 	}
 	for i := 0; i < 12; i++ {
-		plantSelection = append(plantSelection, ShortGrass{})
+		plantSelection = append(plantSelection, TallGrass{Type: NormalTallGrass()})
 	}
 }
 
 // SoilFor ...
 func (g Grass) SoilFor(block world.Block) bool {
 	switch block.(type) {
-	case ShortGrass, Fern, DoubleTallGrass, Flower, DoubleFlower, NetherSprouts, SugarCane:
+	case TallGrass, DoubleTallGrass, Flower, DoubleFlower, NetherSprouts, SugarCane:
 		return true
 	}
 	return false
