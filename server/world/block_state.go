@@ -7,6 +7,7 @@ import (
 	"github.com/df-mc/dragonfly/server/world/chunk"
 	"github.com/sandertv/gophertunnel/minecraft/nbt"
 	"github.com/segmentio/fasthash/fnv1"
+	"maps"
 	"math"
 	"slices"
 	"sort"
@@ -83,7 +84,7 @@ func registerBlockState(s blockState, order bool) {
 	}
 
 	rid := uint32(len(blocks))
-	blocks = append(blocks, unknownBlock{s})
+	blocks = append(blocks, unknownBlock{blockState: s})
 	if order {
 		sort.SliceStable(blocks, func(i, j int) bool {
 			nameOne, _ := blocks[i].EncodeBlock()
@@ -122,6 +123,7 @@ func registerBlockState(s blockState, order bool) {
 // states that haven't yet been added.
 type unknownBlock struct {
 	blockState
+	data map[string]any
 }
 
 // EncodeBlock ...
@@ -137,6 +139,17 @@ func (unknownBlock) Model() BlockModel {
 // Hash ...
 func (b unknownBlock) Hash() uint64 {
 	return math.MaxUint64
+}
+
+// EncodeNBT ...
+func (b unknownBlock) EncodeNBT() map[string]any {
+	return b.data
+}
+
+// DecodeNBT ...
+func (b unknownBlock) DecodeNBT(data map[string]any) any {
+	b.data = maps.Clone(data)
+	return b
 }
 
 // blockState holds a combination of a name and properties, together with a version.
