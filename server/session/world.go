@@ -117,6 +117,8 @@ func (s *Session) ViewEntity(e world.Entity) {
 			s.writePacket(&packet.PlayerList{ActionType: packet.PlayerListActionRemove, Entries: []protocol.PlayerListEntry{{
 				UUID: v.UUID(),
 			}}})
+		} else {
+			s.ViewSkin(e)
 		}
 		return
 	case *entity.Ent:
@@ -1054,7 +1056,7 @@ func (s *Session) openNormalContainer(b block.Container, pos cube.Pos) {
 
 	nextID := s.nextWindowID()
 	s.containerOpened.Store(true)
-	s.openedWindow.Store(b.Inventory())
+	s.openedWindow.Store(b.Inventory(s.c.World(), pos))
 	s.openedPos.Store(pos)
 
 	var containerType byte
@@ -1077,7 +1079,7 @@ func (s *Session) openNormalContainer(b block.Container, pos cube.Pos) {
 		ContainerPosition:       protocol.BlockPos{int32(pos[0]), int32(pos[1]), int32(pos[2])},
 		ContainerEntityUniqueID: -1,
 	})
-	s.sendInv(b.Inventory(), uint32(nextID))
+	s.sendInv(b.Inventory(s.c.World(), pos), uint32(nextID))
 }
 
 func (s *Session) OpenNormalContainer(b block.Container, pos cube.Pos) {
@@ -1091,9 +1093,6 @@ func (s *Session) ViewSlotChange(slot int, newItem item.Stack) {
 	}
 	if s.inTransaction.Load() {
 		// Don't send slot changes to the player itself.
-		queuedSlotChanges := s.queuedSlotChanges.Load()
-		queuedSlotChanges[slot] = newItem
-		s.queuedSlotChanges.Store(queuedSlotChanges)
 		return
 	}
 	s.writePacket(&packet.InventorySlot{

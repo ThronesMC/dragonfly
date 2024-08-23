@@ -15,14 +15,14 @@ import (
 
 // Hopper is a low-capacity storage block that can be used to collect item entities directly above it, as well as to
 // transfer items into and out of other containers.
-// TODO: Functionality!
 type Hopper struct {
 	transparent
 	sourceWaterDisplacer
 
 	// Facing is the direction the hopper is facing.
 	Facing cube.Face
-	// Powered is whether the hopper is powered or not.
+	// Powered is whether the hopper is powered or not. If the hopper is powered it will be locked and will stop
+	// moving items into or out of itself.
 	Powered bool
 	// CustomName is the custom name of the hopper. This name is displayed when the hopper is opened, and may include
 	// colour codes.
@@ -30,8 +30,10 @@ type Hopper struct {
 
 	// LastTick is the last world tick that the hopper was ticked.
 	LastTick int64
-	// TransferCooldown is the duration until the hopper can transfer items again.
+	// TransferCooldown is the duration in ticks until the hopper can transfer items again.
 	TransferCooldown int64
+	// CollectCooldown is the duration in ticks until the hopper can collect items again.
+	CollectCooldown int64
 
 	inventory *inventory.Inventory
 	viewerMu  *sync.RWMutex
@@ -57,8 +59,7 @@ func NewHopper() Hopper {
 
 // Model ...
 func (Hopper) Model() world.BlockModel {
-	// TODO: Implement me.
-	return model.Solid{}
+	return model.Hopper{}
 }
 
 // SideClosed ...
@@ -68,11 +69,15 @@ func (Hopper) SideClosed(cube.Pos, cube.Pos, *world.World) bool {
 
 // BreakInfo ...
 func (h Hopper) BreakInfo() BreakInfo {
-	return newBreakInfo(3, pickaxeHarvestable, pickaxeEffective, oneOf(h))
+	return newBreakInfo(3, pickaxeHarvestable, pickaxeEffective, oneOf(h)).withBlastResistance(24).withBreakHandler(func(pos cube.Pos, w *world.World, u item.User) {
+		for _, i := range h.Inventory(w, pos).Clear() {
+			dropItem(w, i, pos.Vec3())
+		}
+	})
 }
 
 // Inventory returns the inventory of the hopper.
-func (h Hopper) Inventory() *inventory.Inventory {
+func (h Hopper) Inventory(*world.World, cube.Pos) *inventory.Inventory {
 	return h.inventory
 }
 
@@ -98,8 +103,8 @@ func (h Hopper) RemoveViewer(v ContainerViewer, _ *world.World, _ cube.Pos) {
 
 // Activate ...
 func (Hopper) Activate(pos cube.Pos, _ cube.Face, _ *world.World, u item.User, _ *item.UseContext) bool {
-	if o, ok := u.(ContainerOpener); ok {
-		o.OpenBlockContainer(pos)
+	if opener, ok := u.(ContainerOpener); ok {
+		opener.OpenBlockContainer(pos)
 		return true
 	}
 	return false
@@ -126,111 +131,99 @@ func (h Hopper) UseOnBlock(pos cube.Pos, face cube.Face, _ mgl64.Vec3, w *world.
 // Tick ...
 func (h Hopper) Tick(currentTick int64, pos cube.Pos, w *world.World) {
 	h.TransferCooldown--
+	h.CollectCooldown--
 	h.LastTick = currentTick
-	if !h.Powered {
-		h.extractItemEntity(pos, w)
-	}
-	if h.TransferCooldown > 0 {
-		w.SetBlock(pos, h, nil)
-		return
+
+	if !h.Powered && h.TransferCooldown <= 0 {
+		inserted := h.insertItem(pos, w)
+		extracted := h.extractItem(pos, w)
+		if inserted || extracted {
+			h.TransferCooldown = 8
+		}
 	}
 
-	h.TransferCooldown = 0
-	if h.Powered {
-		w.SetBlock(pos, h, nil)
-		return
-	}
-
-	inserted := h.insertItem(pos, w)
-	extracted := h.extractItem(pos, w)
-	if inserted || extracted {
-		h.TransferCooldown = 8
-		w.SetBlock(pos, h, nil)
-	}
+	w.SetBlock(pos, h, nil)
 }
 
-// insertItem ...
+// HopperInsertable represents a block that can have its contents inserted into by a hopper.
+type HopperInsertable interface {
+	// InsertItem handles the insert logic for that block.
+	InsertItem(h Hopper, pos cube.Pos, w *world.World) bool
+}
+
+// insertItem inserts an item into a block that can receive contents from the hopper.
 func (h Hopper) insertItem(pos cube.Pos, w *world.World) bool {
-	// TODO
+	destPos := pos.Side(h.Facing)
+	dest := w.Block(destPos)
+
+	if e, ok := dest.(HopperInsertable); ok {
+		return e.InsertItem(h, pos.Side(h.Facing), w)
+	}
+
+	if container, ok := dest.(Container); ok {
+		for sourceSlot, sourceStack := range h.inventory.Slots() {
+			if sourceStack.Empty() {
+				continue
+			}
+
+			_, err := container.Inventory(w, pos).AddItem(sourceStack.Grow(-sourceStack.Count() + 1))
+			if err != nil {
+				// The destination is full.
+				return false
+			}
+
+			_ = h.inventory.SetItem(sourceSlot, sourceStack.Grow(-1))
+
+			if hopper, ok := dest.(Hopper); ok {
+				hopper.TransferCooldown = 8
+				w.SetBlock(destPos, hopper, nil)
+			}
+
+			return true
+		}
+	}
 	return false
 }
 
 // HopperExtractable represents a block that can have its contents extracted by a hopper.
 type HopperExtractable interface {
-	Container
-
-	// ExtractItem attempts to extract a single item from the container. If the extraction was successful, the item is
-	// returned. If the extraction was unsuccessful, the item stack returned will be empty. ExtractItem by itself does
-	// should not remove the item from the container, but instead return the item that would be removed.
-	ExtractItem() (item.Stack, int)
+	// ExtractItem handles the extract logic for that block.
+	ExtractItem(h Hopper, pos cube.Pos, w *world.World) bool
 }
 
-// extractItem ...
+// extractItem extracts an item from a container into the hopper.
 func (h Hopper) extractItem(pos cube.Pos, w *world.World) bool {
-	origin, ok := w.Block(pos.Side(cube.FaceUp)).(Container)
-	if !ok {
-		return false
+	originPos := pos.Side(cube.FaceUp)
+	origin := w.Block(originPos)
+
+	if e, ok := origin.(HopperExtractable); ok {
+		return e.ExtractItem(h, pos, w)
 	}
 
-	var (
-		targetSlot  int
-		targetStack item.Stack
-	)
-	if e, ok := origin.(HopperExtractable); !ok {
-		for slot, stack := range origin.Inventory().Items() {
+	if containerOrigin, ok := origin.(Container); ok {
+		for slot, stack := range containerOrigin.Inventory(w, originPos).Slots() {
 			if stack.Empty() {
+				// We don't have any items to extract.
 				continue
 			}
-			targetStack, targetSlot = stack, slot
-			break
+
+			_, err := h.inventory.AddItem(stack.Grow(-stack.Count() + 1))
+			if err != nil {
+				// The hopper is full.
+				continue
+			}
+
+			_ = containerOrigin.Inventory(w, originPos).SetItem(slot, stack.Grow(-1))
+
+			if hopper, ok := origin.(Hopper); ok {
+				hopper.TransferCooldown = 8
+				w.SetBlock(originPos, hopper, nil)
+			}
+
+			return true
 		}
-	} else {
-		targetStack, targetSlot = e.ExtractItem()
 	}
-	if targetStack.Empty() {
-		// We don't have any items to extract.
-		return false
-	}
-
-	_, err := h.inventory.AddItem(targetStack.Grow(-targetStack.Count() + 1))
-	if err != nil {
-		// The hopper is full.
-		return false
-	}
-	_ = origin.Inventory().SetItem(targetSlot, targetStack.Grow(-1))
-	return true
-}
-
-// itemEntity ...
-type itemEntity interface {
-	world.Entity
-
-	Item() item.Stack
-	SetItem(item.Stack)
-}
-
-// extractItemEntity ...
-func (h Hopper) extractItemEntity(pos cube.Pos, w *world.World) {
-	for _, e := range w.EntitiesWithin(cube.Box(0, 1, 0, 1, 2, 1).Translate(pos.Vec3()), func(entity world.Entity) bool {
-		_, ok := entity.(itemEntity)
-		return !ok
-	}) {
-		i := e.(itemEntity)
-
-		stack := i.Item()
-		count, _ := h.inventory.AddItem(stack)
-		if count == 0 {
-			// We couldn't add any of the item to the inventory, so we continue to the next item entity.
-			continue
-		}
-
-		if stack = stack.Grow(-count); stack.Empty() {
-			_ = i.Close()
-			return
-		}
-		i.SetItem(stack)
-		return
-	}
+	return false
 }
 
 // EncodeItem ...
@@ -281,9 +274,8 @@ func (h Hopper) DecodeNBT(data map[string]any) any {
 // allHoppers ...
 func allHoppers() (hoppers []world.Block) {
 	for _, f := range cube.Faces() {
-		for _, p := range []bool{false, true} {
-			hoppers = append(hoppers, Hopper{Facing: f, Powered: p})
-		}
+		hoppers = append(hoppers, Hopper{Facing: f})
+		hoppers = append(hoppers, Hopper{Facing: f, Powered: true})
 	}
 	return hoppers
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/event"
 	"github.com/df-mc/dragonfly/server/item"
+	"github.com/df-mc/dragonfly/server/player/diagnostics"
 	"github.com/df-mc/dragonfly/server/player/skin"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/go-gl/mathgl/mgl64"
@@ -141,6 +142,10 @@ type Handler interface {
 	HandleQuit()
 	// HandleCommandOutput to intercept command output.
 	HandleCommandOutput(output **cmd.Output)
+	// HandleDiagnostics handles the latest diagnostics data that the player has sent to the server. This is
+	// not sent by every client however, only those with the "Creator > Enable Client Diagnostics" setting
+	// enabled.
+	HandleDiagnostics(d diagnostics.Diagnostics)
 }
 
 // NopHandler implements the Handler interface but does not execute any code when an event is called. The
@@ -187,3 +192,4 @@ func (NopHandler) HandleDeath(world.DamageSource, *bool)                        
 func (NopHandler) HandleRespawn(*mgl64.Vec3, **world.World)                                   {}
 func (NopHandler) HandleQuit()                                                                {}
 func (NopHandler) HandleCommandOutput(**cmd.Output)                                           {}
+func (NopHandler) HandleDiagnostics(d diagnostics.Diagnostics)                                {}

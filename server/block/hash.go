@@ -598,10 +598,12 @@ func (Honeycomb) Hash() uint64 {
 	return hashHoneycomb
 }
 
+// Hash ...
 func (h Hopper) Hash() uint64 {
 	return hashHopper | uint64(h.Facing)<<8 | uint64(boolByte(h.Powered))<<11
 }
 
+// Hash ...
 func (InvisibleBedrock) Hash() uint64 {
 	return hashInvisibleBedrock
 }

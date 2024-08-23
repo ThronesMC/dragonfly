@@ -28,21 +28,33 @@ import (
 // StopShowingEntity stops showing a world.Entity to the Session. It will be completely invisible until a call to
 // StartShowingEntity is made.
 func (s *Session) StopShowingEntity(e world.Entity) {
-	s.HideEntity(e)
 	s.entityMutex.Lock()
-	s.hiddenEntities[e] = struct{}{}
+	_, ok := s.hiddenEntities[e]
+	if !ok {
+		s.hiddenEntities[e] = struct{}{}
+	}
 	s.entityMutex.Unlock()
+
+	if !ok {
+		s.HideEntity(e)
+	}
 }
 
 // StartShowingEntity starts showing a world.Entity to the Session that was previously hidden using StopShowingEntity.
 func (s *Session) StartShowingEntity(e world.Entity) {
 	s.entityMutex.Lock()
-	delete(s.hiddenEntities, e)
+	_, ok := s.hiddenEntities[e]
+	if ok {
+		delete(s.hiddenEntities, e)
+	}
 	s.entityMutex.Unlock()
-	s.ViewEntity(e)
-	s.ViewEntityState(e)
-	s.ViewEntityItems(e)
-	s.ViewEntityArmour(e)
+
+	if ok {
+		s.ViewEntity(e)
+		s.ViewEntityState(e)
+		s.ViewEntityItems(e)
+		s.ViewEntityArmour(e)
+	}
 }
 
 // closeCurrentContainer closes the container the player might currently have open.
@@ -228,16 +240,7 @@ func (s *Session) invByID(id int32) (*inventory.Inventory, bool) {
 		return s.armour.Inventory(), true
 	case protocol.ContainerLevelEntity:
 		if s.containerOpened.Load() {
-			b := s.c.World().Block(s.openedPos.Load())
-			if _, chest := b.(block.Chest); chest {
-				return s.openedWindow.Load(), true
-			} else if _, enderChest := b.(block.EnderChest); enderChest {
-				return s.openedWindow.Load(), true
-			} else if _, dropper := b.(block.Dropper); dropper {
-				return s.openedWindow.Load(), true
-			} else if _, hopper := b.(block.Hopper); hopper {
-				return s.openedWindow.Load(), true
-			}
+			return s.openedWindow.Load(), true
 		}
 	case protocol.ContainerBarrel:
 		if s.containerOpened.Load() {
@@ -786,6 +789,9 @@ func stackToItem(it protocol.ItemStack) item.Stack {
 		t = block.Air{}
 	}
 	if it.BlockRuntimeID > 0 {
+		// It shouldn't matter if it (for whatever reason) wasn't able to get the block runtime ID,
+		// since on the next line, we assert that the block is an item. If it didn't succeed, it'll
+		// return air anyway.
 		b, _ := world.BlockByRuntimeID(uint32(it.BlockRuntimeID))
 		if t, ok = b.(world.Item); !ok {
 			t = block.Air{}
