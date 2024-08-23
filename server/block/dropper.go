@@ -57,7 +57,7 @@ func (d Dropper) BreakInfo() BreakInfo {
 }
 
 // Inventory returns the inventory of the dropper.
-func (d Dropper) Inventory() *inventory.Inventory {
+func (d Dropper) Inventory(*world.World, cube.Pos) *inventory.Inventory {
 	return d.inventory
 }
 
@@ -126,16 +126,16 @@ func (d Dropper) ScheduledTick(pos cube.Pos, w *world.World, r *rand.Rand) {
 		return
 	}
 
-	it, _ := d.Inventory().Item(slot)
+	it, _ := d.Inventory(w, pos).Item(slot)
 	if c, ok := w.Block(pos.Side(d.Facing)).(Container); ok {
-		if _, err := c.Inventory().AddItem(it.Grow(-it.Count() + 1)); err != nil {
+		if _, err := c.Inventory(w, pos).AddItem(it.Grow(-it.Count() + 1)); err != nil {
 			return
 		}
-		_ = d.Inventory().SetItem(slot, it.Grow(-1))
+		_ = d.Inventory(w, pos).SetItem(slot, it.Grow(-1))
 		return
 	}
 
-	_ = d.Inventory().SetItem(slot, it.Grow(-1))
+	_ = d.Inventory(w, pos).SetItem(slot, it.Grow(-1))
 
 	dist := r.Float64()/10 + 0.2
 	sourcePos := pos.Vec3Centre().Add(cube.Pos{}.Side(d.Facing).Vec3().Mul(0.7))
