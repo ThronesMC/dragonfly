@@ -10,7 +10,7 @@ import (
 
 // NewFallingBlock creates a new FallingBlock entity.
 func NewFallingBlock(block world.Block, pos mgl64.Vec3) *Ent {
-	return Config{Behaviour: fallingBlockConf.New(block, FallingBlockBehaviour{block: block}.DefaultTick)}.New(FallingBlockType{}, pos)
+	return Config{Behaviour: fallingBlockConf.New(block, FallingBlockBehaviorDefault)}.New(FallingBlockType{}, pos)
 }
 
 var fallingBlockConf = FallingBlockBehaviourConfig{

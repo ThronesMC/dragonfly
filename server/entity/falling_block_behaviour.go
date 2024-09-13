@@ -8,6 +8,14 @@ import (
 	"github.com/go-gl/mathgl/mgl64"
 	"math"
 	"math/rand"
+	"time"
+)
+
+type FallingBlockBehaviorType int
+
+const (
+	FallingBlockBehaviorDefault FallingBlockBehaviorType = iota
+	FallingBlockBehaviorTemporary
 )
 
 // FallingBlockBehaviourConfig holds optional parameters for
@@ -22,12 +30,12 @@ type FallingBlockBehaviourConfig struct {
 
 // New creates a FallingBlockBehaviour using the optional parameters in conf and
 // a block type.
-func (conf FallingBlockBehaviourConfig) New(b world.Block, tick func(e *Ent)) *FallingBlockBehaviour {
+func (conf FallingBlockBehaviourConfig) New(b world.Block, behaviorType FallingBlockBehaviorType) *FallingBlockBehaviour {
 	behaviour := &FallingBlockBehaviour{block: b}
 	behaviour.passive = PassiveBehaviourConfig{
 		Gravity: conf.Gravity,
 		Drag:    conf.Drag,
-		Tick:    tick,
+		Tick:    []func(*Ent){behaviour.DefaultTick, behaviour.TemporaryTick}[int(behaviorType)],
 	}.New()
 	return behaviour
 }
@@ -43,6 +51,11 @@ func (f *FallingBlockBehaviour) Block() world.Block {
 	return f.block
 }
 
+// OnGround checks if the entity is currently on the ground.
+func (f *FallingBlockBehaviour) OnGround() bool {
+	return f.passive.mc.OnGround()
+}
+
 // Tick implements the movement and solidification behaviour of falling blocks.
 func (f *FallingBlockBehaviour) Tick(e *Ent) *Movement {
 	return f.passive.Tick(e)
@@ -54,6 +67,20 @@ func (f *FallingBlockBehaviour) DefaultTick(e *Ent) {
 	bpos, w := cube.PosFromVec3(pos), e.World()
 	if a, ok := f.block.(Solidifiable); (ok && a.Solidifies(bpos, w)) || f.passive.mc.OnGround() {
 		f.solidify(e, pos, w)
+	}
+}
+
+// TemporaryTick checks if the falling block should only always solidify and then disappears after 3 seconds.
+func (f *FallingBlockBehaviour) TemporaryTick(e *Ent) {
+	pos := e.Position()
+	bpos, w := cube.PosFromVec3(pos), e.World()
+	if a, ok := f.block.(Solidifiable); (ok && a.Solidifies(bpos, w)) || f.passive.mc.OnGround() {
+		f.passive.close = true
+		w.SetBlock(bpos, f.block, nil)
+		go func() {
+			time.Sleep(3 * time.Second)
+			w.SetBlock(bpos, block.Air{}, nil)
+		}()
 	}
 }
 
