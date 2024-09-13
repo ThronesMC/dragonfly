@@ -1,8 +1,8 @@
 module github.com/df-mc/dragonfly
 
-go 1.22
+go 1.22.0
 
-toolchain go1.22.1
+toolchain go1.22.2
 
 require (
 	github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9
@@ -17,9 +17,9 @@ require (
 	github.com/sandertv/gophertunnel v1.40.1
 	github.com/segmentio/fasthash v1.0.3
 	github.com/sirupsen/logrus v1.9.3
-	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
-	golang.org/x/text v0.17.0
-	golang.org/x/tools v0.24.0
+	golang.org/x/exp v0.0.0-20240909161429-701f63a606c0
+	golang.org/x/text v0.18.0
+	golang.org/x/tools v0.25.0
 )
 
 require (
@@ -28,12 +28,12 @@ require (
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/muhammadmuzzammil1998/jsonc v1.0.0 // indirect
 	github.com/sandertv/go-raknet v1.14.1 // indirect
-	golang.org/x/crypto v0.26.0 // indirect
-	golang.org/x/image v0.19.0 // indirect
-	golang.org/x/mod v0.20.0 // indirect
-	golang.org/x/net v0.28.0 // indirect
-	golang.org/x/oauth2 v0.22.0 // indirect
+	golang.org/x/crypto v0.27.0 // indirect
+	golang.org/x/image v0.20.0 // indirect
+	golang.org/x/mod v0.21.0 // indirect
+	golang.org/x/net v0.29.0 // indirect
+	golang.org/x/oauth2 v0.23.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.24.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
